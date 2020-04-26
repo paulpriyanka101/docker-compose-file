@@ -1,0 +1,44 @@
+version: '3'
+services:
+  db1:
+    image: mysql:5.7
+    volumes:
+      - mysql_data:/var/lib/mysql
+    restart: always
+    networks:
+      net4:
+        ipv4_address: 172.28.0.1
+    environment:
+      MYSQL_ROOT_PASSORD: redhat
+      MYSQL_USER: admin
+      MYSQL_PASSWORD: admin
+      MYSQL_DATSBASE: mydb
+
+  webapp1:
+    iamge: wordpress:5.1.1-php7.3-apache
+    ports:
+      - 8080:80
+    volumes:
+      - webapp_data:/var/www/html
+    reatrt: always
+    networks:
+      net4:
+        ipv4_address: 172.28.0.2
+    depends_on:
+      - db1
+    environment:
+      WORDPRESs_DB_HOST: db1
+      WORDPRESS_DB_USER: admin
+      WORDPRESS_DB_PASSWORd: admin
+      WORDPRESS_DB_NAME: mydb
+
+volumes:
+  webapp_data:
+  mysql_data:
+
+networks:
+  net4:
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.28.0.0/16
